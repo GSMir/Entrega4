@@ -1,0 +1,49 @@
+---
+title: "Entrega 4"
+author: "Ángel García, Arnau Piferrer y Guillem Serra"
+format: html
+editor: visual
+---
+
+
+Este es el [repositorio](https://github.com/GSMir/Entrega4) de GitHub en el que alojaremos todos los archivos relacionados con esta entrega.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+<!--- Para las librerías --->
+```{r, message = FALSE,warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(dplyr)
+```
+
+<!--- Carga de los datos --->
+```{r}
+gorrionesS = read_xlsx("gorriones.xlsx", sheet = "Supervivientes")
+S = rep(1,28)
+gorrionesS$X6 <- factor(S)
+
+gorrionesN = read_xlsx("gorriones.xlsx", sheet = "No supervivientes")
+gorrionesN = gorrionesN %>%
+  rename(X1 = X1_1, X2 = X2_2, X3 = X3_3, X4 = X4_4, X5 = X5_5)
+N = numeric(21)
+gorrionesN$X6 <- factor(N)
+
+gorriones = rbind(gorrionesS, gorrionesN)
+```
+
+
+<!--- Ahora toca cambiar el nombre de las variables para que tengan sentido --->
+<!---```{r}
+
+```--->
+
+<!--- Y aquí finalmente lo que nos pide el ejercicio --->
+<!---```{r}
+
+```--->
+
+
+
