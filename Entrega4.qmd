@@ -26,7 +26,6 @@ gorrionesS = read_xlsx("gorriones.xlsx", sheet = "Supervivientes")
 gorrionesN = read_xlsx("gorriones.xlsx", sheet = "No supervivientes")
 ```
 
-
 ```{r}
 gorrionesS = gorrionesS %>%
   rename(tlen = X1, eala = X2, picolen = X3, humlen = X4, estlen = X5)
@@ -47,11 +46,11 @@ gorrionesN <- gorrionesN %>%
 gorriones = rbind(gorrionesS, gorrionesN)
 ```
 
-
-
 <!--- Y aquí finalmente lo que nos pide el ejercicio --->
+
 
 <!---```{r}
 
 ```
 --->
+
