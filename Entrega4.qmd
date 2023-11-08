@@ -46,11 +46,79 @@ gorrionesN <- gorrionesN %>%
 gorriones = rbind(gorrionesS, gorrionesN)
 ```
 
+
+
+
 <!--- Y aquí finalmente lo que nos pide el ejercicio --->
 
-
-<!---```{r}
-
+### Comparación de Medias
+```{r}
+gorriones %>%
+  group_by(superv) %>%
+  summarise_if(is.numeric, mean, na.rm = TRUE)
 ```
---->
+
+```{r}
+t.test(tlen ~ superv, data = gorriones)
+```
+```{r}
+t.test(eala ~ superv, data = gorriones)
+```
+```{r}
+t.test(picolen ~ superv, data = gorriones)
+```
+```{r}
+t.test(humlen ~ superv, data = gorriones)
+```
+```{r}
+t.test(estlen ~ superv, data = gorriones)
+```
+
+
+<!--- Creo que esto de a continuación está mal --->
+### Comparación de covarianzas
+```{r}
+nX = nrow(gorrionesS)
+nY = nrow(gorrionesN)
+nT = nrow(gorriones)
+covX = cov(select_if(gorrionesS, is.numeric))
+covY = cov(select_if(gorrionesN, is.numeric))
+covT = ((nX*covX)+(nY*covY))/(nX+nY)
+lambdaR = (det(covX)**(nX/2))*(det(covY)**(nY/2))/(det(covT)**(nT/2))
+q = (2-1)*5*(5+1)/2
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

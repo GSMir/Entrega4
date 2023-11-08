@@ -71,10 +71,97 @@ ul.task-list li input[type="checkbox"] {
 <!--- Para las librerías --->
 <!--- Carga de los datos --->
 <!--- Y aquí finalmente lo que nos pide el ejercicio --->
-<!---```{r}
+<section id="comparación-de-medias" class="level3">
+<h3 class="anchored" data-anchor-id="comparación-de-medias">Comparación de Medias</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 x 6
+  superv  tlen  eala picolen humlen estlen
+  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 1       158.  241.    315.   185.   207.
+2 0       158.  241.    314.   184.   210.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
 
-```
---->
+data:  tlen by superv
+t = -0.18755, df = 41.092, p-value = 0.8522
+alternative hypothesis: true difference in means between group 1 and group 0 is not equal to 0
+95 percent confidence interval:
+ -2.381528  1.976766
+sample estimates:
+mean in group 1 mean in group 0 
+       157.8929        158.0952 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  eala by superv
+t = -0.061752, df = 35.456, p-value = 0.9511
+alternative hypothesis: true difference in means between group 1 and group 0 is not equal to 0
+95 percent confidence interval:
+ -3.224782  3.034305
+sample estimates:
+mean in group 1 mean in group 0 
+       241.2857        241.3810 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  picolen by superv
+t = 0.29449, df = 37.957, p-value = 0.77
+alternative hypothesis: true difference in means between group 1 and group 0 is not equal to 0
+95 percent confidence interval:
+ -4.126095  5.530857
+sample estimates:
+mean in group 1 mean in group 0 
+       314.8929        314.1905 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  humlen by superv
+t = 0.74122, df = 30.724, p-value = 0.4642
+alternative hypothesis: true difference in means between group 1 and group 0 is not equal to 0
+95 percent confidence interval:
+ -2.274150  4.869388
+sample estimates:
+mean in group 1 mean in group 0 
+       185.2500        183.9524 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  estlen by superv
+t = -0.70834, df = 28.973, p-value = 0.4844
+alternative hypothesis: true difference in means between group 1 and group 0 is not equal to 0
+95 percent confidence interval:
+ -8.561666  4.156904
+sample estimates:
+mean in group 1 mean in group 0 
+       207.3214        209.5238 </code></pre>
+</div>
+</div>
+<!--- Creo que esto de a continuación está mal --->
+</section>
+<section id="comparación-de-covarianzas" class="level3">
+<h3 class="anchored" data-anchor-id="comparación-de-covarianzas">Comparación de covarianzas</h3>
+</section>
 
 </main>
 <!-- /main column -->
