@@ -59,16 +59,16 @@ gorriones %>%
 ```
 
 ```{r}
-t.test(tlen ~ superv, data = gorriones)
+t.test(gorrionesS$tlen, gorrionesN$tlen)
 ```
 ```{r}
-t.test(eala ~ superv, data = gorriones)
+t.test(gorrionesS$eala, gorrionesN$eala)
 ```
 ```{r}
-t.test(picolen ~ superv, data = gorriones)
+t.test(gorrionesS$picolen, gorrionesN$picolen)
 ```
 ```{r}
-t.test(humlen ~ superv, data = gorriones)
+t.test(gorrionesS$humlen, gorrionesN$humlen)
 ```
 ```{r}
 t.test(estlen ~ superv, data = gorriones)
@@ -87,6 +87,8 @@ covT = ((nX*covX)+(nY*covY))/(nX+nY)
 lambdaR = (det(covX)**(nX/2))*(det(covY)**(nY/2))/(det(covT)**(nT/2))
 q = (2-1)*5*(5+1)/2
 logLambda = nT*log(det(covT))-(nX*log(det(covX))+nY*log(det(covY)))
+logLambda
+-2*log(lambdaR)
 ```
 
 
