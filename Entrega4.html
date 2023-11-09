@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -69,11 +103,42 @@ ul.task-list li input[type="checkbox"] {
 
 <p>Este es el <a href="https://github.com/GSMir/Entrega4">repositorio</a> de GitHub en el que alojaremos todos los archivos relacionados con esta entrega.</p>
 <!--- Para las librerías --->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <!--- Carga de los datos --->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gorrionesS <span class="ot">=</span> <span class="fu">read_xlsx</span>(<span class="st">"gorriones.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"Supervivientes"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>gorrionesN <span class="ot">=</span> <span class="fu">read_xlsx</span>(<span class="st">"gorriones.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"No supervivientes"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gorrionesS <span class="ot">=</span> gorrionesS <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">tlen =</span> X1, <span class="at">eala =</span> X2, <span class="at">picolen =</span> X3, <span class="at">humlen =</span> X4, <span class="at">estlen =</span> X5)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">28</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>gorrionesS<span class="sc">$</span>superv <span class="ot">&lt;-</span> <span class="fu">factor</span>(S)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>gorrionesS <span class="ot">&lt;-</span> gorrionesS <span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(superv, tlen, eala, picolen, humlen, estlen)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>gorrionesN <span class="ot">=</span> gorrionesN <span class="sc">%&gt;%</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">tlen =</span> X1_1, <span class="at">eala =</span> X2_2, <span class="at">picolen =</span> X3_3, <span class="at">humlen =</span> X4_4, <span class="at">estlen =</span> X5_5)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">numeric</span>(<span class="dv">21</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>gorrionesN<span class="sc">$</span>superv <span class="ot">&lt;-</span> <span class="fu">factor</span>(N)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>gorrionesN <span class="ot">&lt;-</span> gorrionesN <span class="sc">%&gt;%</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(superv, tlen, eala, picolen, humlen, estlen)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>gorriones <span class="ot">=</span> <span class="fu">rbind</span>(gorrionesS, gorrionesN)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <!--- Y aquí finalmente lo que nos pide el ejercicio --->
 <section id="comparación-de-medias" class="level3">
 <h3 class="anchored" data-anchor-id="comparación-de-medias">Comparación de Medias</h3>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>gorriones <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(superv) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 x 6
   superv  tlen  eala picolen humlen estlen
@@ -83,6 +148,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(gorrionesS<span class="sc">$</span>tlen, gorrionesN<span class="sc">$</span>tlen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Welch Two Sample t-test
@@ -98,6 +164,7 @@ mean of x mean of y
 </div>
 </div>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(gorrionesS<span class="sc">$</span>eala, gorrionesN<span class="sc">$</span>eala)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Welch Two Sample t-test
@@ -113,6 +180,7 @@ mean of x mean of y
 </div>
 </div>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(gorrionesS<span class="sc">$</span>picolen, gorrionesN<span class="sc">$</span>picolen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Welch Two Sample t-test
@@ -128,6 +196,7 @@ mean of x mean of y
 </div>
 </div>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(gorrionesS<span class="sc">$</span>humlen, gorrionesN<span class="sc">$</span>humlen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Welch Two Sample t-test
@@ -143,6 +212,7 @@ mean of x mean of y
 </div>
 </div>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(estlen <span class="sc">~</span> superv, <span class="at">data =</span> gorriones)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Welch Two Sample t-test
@@ -162,12 +232,30 @@ mean in group 1 mean in group 0
 <section id="comparación-de-covarianzas" class="level3">
 <h3 class="anchored" data-anchor-id="comparación-de-covarianzas">Comparación de covarianzas</h3>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 26.30355</code></pre>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nX <span class="ot">=</span> <span class="fu">nrow</span>(gorrionesS)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>nY <span class="ot">=</span> <span class="fu">nrow</span>(gorrionesN)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>nT <span class="ot">=</span> <span class="fu">nrow</span>(gorriones)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>covX <span class="ot">=</span> <span class="fu">cov</span>(<span class="fu">select_if</span>(gorrionesS, is.numeric))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>covY <span class="ot">=</span> <span class="fu">cov</span>(<span class="fu">select_if</span>(gorrionesN, is.numeric))</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>covT <span class="ot">=</span> ((nX<span class="sc">*</span>covX)<span class="sc">+</span>(nY<span class="sc">*</span>covY))<span class="sc">/</span>(nX<span class="sc">+</span>nY)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>lambdaR <span class="ot">=</span> (<span class="fu">det</span>(covX)<span class="sc">**</span>(nX<span class="sc">/</span><span class="dv">2</span>))<span class="sc">*</span>(<span class="fu">det</span>(covY)<span class="sc">**</span>(nY<span class="sc">/</span><span class="dv">2</span>))<span class="sc">/</span>(<span class="fu">det</span>(covT)<span class="sc">**</span>(nT<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>q <span class="ot">=</span> (<span class="dv">2-1</span>)<span class="sc">*</span><span class="dv">5</span><span class="sc">*</span>(<span class="dv">5</span><span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>logLambda <span class="ot">=</span> nT<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covT))<span class="sc">-</span>(nX<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covX))<span class="sc">+</span>nY<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covY)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>gorriones <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(superv) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, sd, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 26.30355</code></pre>
+<pre><code># A tibble: 2 x 6
+  superv  tlen  eala picolen humlen estlen
+  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 1       3.55  4.41    7.28   4.29   7.07
+2 0       3.87  5.95    8.93   7.11  12.9 </code></pre>
 </div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>chi2 <span class="ot">=</span> <span class="fu">qchisq</span>(<span class="dv">1</span><span class="fl">-0.05</span>, <span class="at">df =</span> q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 

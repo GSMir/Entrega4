@@ -8,7 +8,7 @@ editor: visual
 Este es el [repositorio](https://github.com/GSMir/Entrega4) de GitHub en el que alojaremos todos los archivos relacionados con esta entrega.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 <!--- Para las librerías --->
@@ -46,12 +46,10 @@ gorrionesN <- gorrionesN %>%
 gorriones = rbind(gorrionesS, gorrionesN)
 ```
 
-
-
-
 <!--- Y aquí finalmente lo que nos pide el ejercicio --->
 
 ### Comparación de Medias
+
 ```{r}
 gorriones %>%
   group_by(superv) %>%
@@ -61,22 +59,27 @@ gorriones %>%
 ```{r}
 t.test(gorrionesS$tlen, gorrionesN$tlen)
 ```
+
 ```{r}
 t.test(gorrionesS$eala, gorrionesN$eala)
 ```
+
 ```{r}
 t.test(gorrionesS$picolen, gorrionesN$picolen)
 ```
+
 ```{r}
 t.test(gorrionesS$humlen, gorrionesN$humlen)
 ```
+
 ```{r}
 t.test(estlen ~ superv, data = gorriones)
 ```
 
-
 <!--- Creo que esto de a continuación está mal --->
+
 ### Comparación de covarianzas
+
 ```{r}
 nX = nrow(gorrionesS)
 nY = nrow(gorrionesN)
@@ -87,9 +90,27 @@ covT = ((nX*covX)+(nY*covY))/(nX+nY)
 lambdaR = (det(covX)**(nX/2))*(det(covY)**(nY/2))/(det(covT)**(nT/2))
 q = (2-1)*5*(5+1)/2
 logLambda = nT*log(det(covT))-(nX*log(det(covX))+nY*log(det(covY)))
-logLambda
--2*log(lambdaR)
 ```
+
+```{r}
+gorriones %>%
+  group_by(superv) %>%
+  summarise_if(is.numeric, sd, na.rm = TRUE)
+```
+
+```{r}
+chi2 = qchisq(1-0.05, df = q)
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
