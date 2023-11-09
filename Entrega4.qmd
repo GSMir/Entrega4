@@ -86,6 +86,7 @@ covY = cov(select_if(gorrionesN, is.numeric))
 covT = ((nX*covX)+(nY*covY))/(nX+nY)
 lambdaR = (det(covX)**(nX/2))*(det(covY)**(nY/2))/(det(covT)**(nT/2))
 q = (2-1)*5*(5+1)/2
+logLambda = nT*log(det(covT))-(nX*log(det(covX))+nY*log(det(covY)))
 ```
 
 
