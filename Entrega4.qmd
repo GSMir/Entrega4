@@ -7,6 +7,7 @@ editor: visual
 
 Este es el [repositorio](https://github.com/GSMir/Entrega4) de GitHub en el que alojaremos todos los archivos relacionados con esta entrega.
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -26,14 +27,29 @@ gorrionesS = read_xlsx("gorriones.xlsx", sheet = "Supervivientes")
 gorrionesN = read_xlsx("gorriones.xlsx", sheet = "No supervivientes")
 ```
 
+<!--- Contexto del problema --->
+
+# Contexto del problema:
+
+Se nos proporciona una tabla con medidas de 5 variables biométricas sobre gorriones hembra afectados tras una fuerte tormenta. De los 49 gorriones únicamente 21 sobrevivieron. Las variables de estudio son X_1 = Longitud total, X_2 = Extensión del ala, X_3 = Longitud del pico y la cabeza, X_4 = Longitud del húmero y X_5 = Longitud del esternón.
+
+
+
+
+
+En primer lugar renombramos las variables de nuestros dos conjunto de datos y los juntamos para trabajar con único Dataset.
+
+
 ```{r}
+
+# Renombramos las variables de cada DataSet y definimos la variable "superv" de tipo factor.
+
 gorrionesS = gorrionesS %>%
   rename(tlen = X1, eala = X2, picolen = X3, humlen = X4, estlen = X5)
 S = rep(1,28)
 gorrionesS$superv <- factor(S)
 gorrionesS <- gorrionesS %>%
   select(superv, tlen, eala, picolen, humlen, estlen)
-
 
 gorrionesN = gorrionesN %>%
   rename(tlen = X1_1, eala = X2_2, picolen = X3_3, humlen = X4_4, estlen = X5_5)
@@ -42,13 +58,18 @@ gorrionesN$superv <- factor(N)
 gorrionesN <- gorrionesN %>%
   select(superv, tlen, eala, picolen, humlen, estlen)
 
+# Juntamos ambos conjuntos de datos en un único Dataset
 
 gorriones = rbind(gorrionesS, gorrionesN)
 ```
 
 <!--- Y aquí finalmente lo que nos pide el ejercicio --->
 
-### Comparación de Medias
+
+### Comparación de medias:
+
+Calculamos el vector de medias de las variables numéricas según si los gorriones sobrevivieron o no a las condiciones meteorológicas adversas. Una vez hecho esto, dado que ambas muestras, tanto la de supervivientes como la de no supervivientes, siguen distribuciones normales multivariantes, en particular, cada una de las variables sigue una ditribución normal univariante. Bajo esta premisa podemos aplicar el t-test para hacer un contraste de medias.
+
 
 ```{r}
 gorriones %>%
@@ -76,27 +97,45 @@ t.test(gorrionesS$humlen, gorrionesN$humlen)
 t.test(estlen ~ superv, data = gorriones)
 ```
 
-<!--- Creo que esto de a continuación está mal --->
+Ninguno de los contrastes proporciona un p valor inferior a 0.05, por lo que en ningún caso podemos rechazar la hipótesis nula de que las medias, para cada característica, no sean las mismas.
+
+A partir de aquí realizaremos la comparación de las covarianzas:
 
 ### Comparación de covarianzas
 
 ```{r}
+
+# Definimos los tamaños de las muestras de gorriones supervivientes, no supervivientes y muestra conjunta.
+
 nX = nrow(gorrionesS)
 nY = nrow(gorrionesN)
 nT = nrow(gorriones)
-covX = cov(select_if(gorrionesS, is.numeric))
-covY = cov(select_if(gorrionesN, is.numeric))
-covT = ((nX*covX)+(nY*covY))/(nX+nY)
+
+# Calculamos las matrices de covarianza para cada variable aleatoria que forma la distribución multivariante
+
+covX = cov(select_if(gorrionesS, is.numeric)) # Supervivientes
+covY = cov(select_if(gorrionesN, is.numeric)) # No supervivientes
+covT = ((nX*covX)+(nY*covY))/(nX+nY) # Conjunta
+
+# Estadístico de contraste
+
 lambdaR = (det(covX)**(nX/2))*(det(covY)**(nY/2))/(det(covT)**(nT/2))
 q = (2-1)*5*(5+1)/2
+
+
 logLambda = nT*log(det(covT))-(nX*log(det(covX))+nY*log(det(covY)))
 ```
+
+
+
 
 ```{r}
 gorriones %>%
   group_by(superv) %>%
   summarise_if(is.numeric, sd, na.rm = TRUE)
 ```
+
+
 
 ```{r}
 1-pchisq(logLambda, df=q)
