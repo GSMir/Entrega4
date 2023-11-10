@@ -29,12 +29,16 @@ gorrionesN = read_xlsx("gorriones.xlsx", sheet = "No supervivientes")
 
 <!--- Contexto del problema --->
 
-# Contexto del problema:
+### Contexto y objetivo del problema:
 
-Se nos proporciona una tabla con medidas de 5 variables biométricas sobre gorriones hembra afectados tras una fuerte tormenta. De los 49 gorriones únicamente 21 sobrevivieron. Las variables de estudio son X_1 = Longitud total, X_2 = Extensión del ala, X_3 = Longitud del pico y la cabeza, X_4 = Longitud del húmero y X_5 = Longitud del esternón.
+Se nos proporciona una tabla con medidas de 5 variables biométricas sobre gorriones hembra afectados tras una fuerte tormenta. De los 49 gorriones únicamente 21 sobrevivieron. Las variables de estudio son $X_1 =$ Longitud total, $X_2 =$ Extensión del ala, $X_3 =$ Longitud del pico y la cabeza, $X_4 =$ Longitud del húmero y $X_5 =$ Longitud del esternón.
+
+Consideraremos dos muestras aleatorias simples e independientes $X, Y$ (para nosotros gorriones que sobreviven y gorriones que no sobreviven a la tormenta) de tamaños $\n_X = 21$ y $\n_Y = 28$ respectivamente, de modo que cada una de estas muestras sigue una ley normal multivariante $N_5(\mu_X, \Sigma_X)$ y $N_5(\mu_Y, \Sigma_Y)$.
+
+Nuestro objetivo es comparar las medias y covarianzas entre el grupo de supervivientes y no supervivientes.
 
 
-
+### Tratamiento de los datos:
 
 
 En primer lugar renombramos las variables de nuestros dos conjunto de datos y los juntamos para trabajar con único Dataset.
@@ -68,7 +72,7 @@ gorriones = rbind(gorrionesS, gorrionesN)
 
 ### Comparación de medias:
 
-Calculamos el vector de medias de las variables numéricas según si los gorriones sobrevivieron o no a las condiciones meteorológicas adversas. Una vez hecho esto, dado que ambas muestras, tanto la de supervivientes como la de no supervivientes, siguen distribuciones normales multivariantes, en particular, cada una de las variables sigue una ditribución normal univariante. Bajo esta premisa podemos aplicar el t-test para hacer un contraste de medias.
+Calculamos el vector de medias de las variables numéricas según si los gorriones sobrevivieron o no a las condiciones meteorológicas adversas. Una vez hecho esto, dado que ambas muestras, tanto la de supervivientes como la de no supervivientes, siguen distribuciones normales multivariantes, En particular, cada una de las variables sigue una ditribución normal univariante. Bajo esta premisa podemos aplicar el t-test para hacer un contraste de medias.
 
 
 ```{r}
@@ -99,12 +103,30 @@ t.test(estlen ~ superv, data = gorriones)
 
 Ninguno de los contrastes proporciona un p valor inferior a 0.05, por lo que en ningún caso podemos rechazar la hipótesis nula de que las medias, para cada característica, no sean las mismas.
 
-A partir de aquí realizaremos la comparación de las covarianzas:
+A partir de aquí realizaremos la comparación de las covarianzas.
 
-### Comparación de covarianzas
+
+### Comparación de covarianzas:
+
+Queremos contrastar la hipótesis de igualdad de covarianzas, es decir, hacer el contraste siguiente:
+
+$$ \left\{\begin{array}{l}
+H_{0}:\Sigma_X= \Sigma_Y = \Sigma \\
+H_{1}: \text{No todas las covarianzas son iguales}
+\end{array}\right. $$
+
+Para eso usaremos el contraste de la razón de verosimilitudes, cuyo estadístico es:
+
+
+$$ \lambda_R = \frac{|S_X|^{n_X / 2} |S_Y|^{n_Y /2}}{|S|^{n/2}} $$
+
+donde $S_X$ y $S_Y$ son las matrices de covarianza muestrales de cada grupo de gorriones y $n = n_X + n_Y$ y $S$ es la matriz de covarianzas común, obtenida mediante:
+
+$$ S = \frac{n_X S_X + n_Y S_Y}{n_X + n_Y}   $$
+
+En particular, para nuestro conjunto de datos estos cálculos serían los siguientes:
 
 ```{r}
-
 # Definimos los tamaños de las muestras de gorriones supervivientes, no supervivientes y muestra conjunta.
 
 nX = nrow(gorrionesS)
@@ -120,8 +142,22 @@ covT = ((nX*covX)+(nY*covY))/(nX+nY) # Conjunta
 # Estadístico de contraste
 
 lambdaR = (det(covX)**(nX/2))*(det(covY)**(nY/2))/(det(covT)**(nT/2))
+```
+
+
+Bajo la hipótesis nula, tenemos que $-2log(\lambda_R)$ ~ $\chi^2_q$ donde $q = \frac{1}{2}(g-1)p(p+1)$ donde $g$ es el número de grupos ($2$) y $p$ el número de variables ($5$).
+
+Obsérvese que aplicando logaritmos a la empresión de $\lambda_R$ podemos deducir la siguiente igualdad:
+
+$$ -2 \log(\lambda_R) = n \log |S| - (n_X \log |S_X| + n_Y \log |S_Y|) $$
+
+Si realizamos estos últimos cálculos para nuestro conjunto de datos obtenemos:
+
+
+```{r}
 q = (2-1)*5*(5+1)/2
 
+# -2*log(lambda_R) es logLambda
 
 logLambda = nT*log(det(covT))-(nX*log(det(covX))+nY*log(det(covY)))
 ```
@@ -134,6 +170,9 @@ gorriones %>%
   group_by(superv) %>%
   summarise_if(is.numeric, sd, na.rm = TRUE)
 ```
+
+$$\text{p-valor} = P(\chi^2_{15} \geq 26.3055)) = 1- \text{pchisq(26.3055, 15)} = 0.03 > 0.05$$
+
 
 
 
