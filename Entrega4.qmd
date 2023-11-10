@@ -99,7 +99,7 @@ gorriones %>%
 ```
 
 ```{r}
-chi2 = qchisq(1-0.05, df = q)
+1-pchisq(logLambda, df=q)
 ```
 
 
