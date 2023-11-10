@@ -191,4 +191,4 @@ print.data.frame(Msd, digits= 3)
 
 $$\text{p-valor} = P(\chi^2_{15} \geq 26.3055)) = 1- \text{pchisq(26.3055, 15)} \approx 0.03 < 0.05$$
 
-Entonces, dado que el _p-valor_ es inferior a 0.05 rechazamos la hipotesi nula, a favor de la hipotesi alternativa, que las covarianzas son diferentes.
+Entonces, dado que el _p-valor_ es inferior a $0.05$ rechazamos la hipótesis nula a favor de la hipótesis alternativa. Luego, existe evidencia significativa de que las covarianzas son diferentes.
