@@ -39,7 +39,7 @@ $X_3 =$ Longitud del pico y la cabeza
 $X_4 =$ Longitud del húmero
 $X_5 =$ Longitud del esternón
 
-Consideraremos dos muestras aleatorias simples e independientes $X, Y$ (para nosotros gorriones que sobreviven y gorriones que no sobreviven a la tormenta) de tamaños $ n_X = 21$ y $ n_Y = 28$ respectivamente, de modo que cada una de estas muestras sigue una ley normal multivariante $N_5(\mu_X, \Sigma_X)$ y $N_5(\mu_Y, \Sigma_Y)$.
+Consideraremos dos muestras aleatorias simples e independientes $X, Y$ (para nosotros gorriones que sobreviven y gorriones que no sobreviven a la tormenta) de tamaños $n_X = 21$ y $n_Y = 28$ respectivamente, de modo que cada una de estas muestras sigue una ley normal multivariante $N_5(\mu_X, \Sigma_X)$ y $N_5(\mu_Y, \Sigma_Y)$.
 
 Nuestro objetivo es comparar las medias y covarianzas entre el grupo de supervivientes y no supervivientes.
 
@@ -84,9 +84,10 @@ Calculamos el vector de medias de las variables numéricas según si los gorrion
 
 
 ```{r}
-gorriones %>%
+Mmedias = gorriones %>%
   group_by(superv) %>%
-  summarise_if(is.numeric, mean, na.rm = TRUE)
+  summarise_if(is.numeric, mean, na.rm = TRUE) 
+print.data.frame(Mmedias, digits = 5)
 ```
 
 ```{r}
@@ -109,7 +110,7 @@ t.test(gorrionesS$humlen, gorrionesN$humlen)
 t.test(estlen ~ superv, data = gorriones)
 ```
 
-Ninguno de los contrastes proporciona un p valor inferior a $0.05$, por lo que en ningún caso podemos rechazar la hipótesis nula de que las medias, para cada característica, no sean las mismas.
+Ninguno de los contrastes proporciona un p valor inferior a $0.05$, por lo que en ningún caso podemos rechazar la hipótesis nula de que las medias, para cada característica, no sean las mismas, y aceptamos la hipotesi nula, que las medias son iguales.
 
 A partir de aquí realizaremos la comparación de las covarianzas.
 
@@ -174,19 +175,20 @@ logLambda = nT*log(det(covT))-(nX*log(det(covX))+nY*log(det(covY)))
 ```
 
 
-
-
 ```{r}
-gorriones %>%
+Msd = gorriones %>%
   group_by(superv) %>%
   summarise_if(is.numeric, sd, na.rm = TRUE)
+print.data.frame(Msd, digits= 3)
 ```
-
-$$\text{p-valor} = P(\chi^2_{15} \geq 26.3055)) = 1- \text{pchisq(26.3055, 15)} = 0.03 > 0.05$$
-
 
 
 
 ```{r}
 1-pchisq(logLambda, df=q)
 ```
+
+
+$$\text{p-valor} = P(\chi^2_{15} \geq 26.3055)) = 1- \text{pchisq(26.3055, 15)} \approx 0.03 < 0.05$$
+
+Entonces, dado que el _p-valor_ es inferior a 0.05 rechazamos la hipotesi nula, a favor de la hipotesi alternativa, que las covarianzas son diferentes.
