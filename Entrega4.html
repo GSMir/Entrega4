@@ -120,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="contexto-y-objetivo-del-problema" class="level3">
 <h3 class="anchored" data-anchor-id="contexto-y-objetivo-del-problema">Contexto y objetivo del problema:</h3>
 <p>Se nos proporciona una tabla con medidas de 5 variables biométricas sobre gorriones hembra afectados tras una fuerte tormenta. De los 49 gorriones únicamente 21 sobrevivieron. Las variables de estudio son:</p>
-<p><span class="math inline">\(X_1 =\)</span> Longitud total <span class="math inline">\(X_2 =\)</span> Extensión del ala <span class="math inline">\(X_3 =\)</span> Longitud del pico y la cabeza <span class="math inline">\(X_4 =\)</span> Longitud del húmero <span class="math inline">\(X_5 =\)</span> Longitud del esternón</p>
+<p><span class="math inline">\(X_1 =\)</span> Longitud total <span class="math inline">\(X_2 =\)</span> Extensión del ala <span class="math inline">\(X_3 =\)</span> Longitud del pico y la cabeza <span class="math inline">\(X_4 =\)</span> Longitud del húmero <span class="math inline">\(X_5 =\)</span> Longitud del esternón <span class="math inline">\(X_0 =\)</span> Variable que indica si los gorriones son supervivientes <span class="math inline">\((1)\)</span> o no <span class="math inline">\((0)\)</span></p>
 <p>Consideraremos dos muestras aleatorias simples e independientes <span class="math inline">\(X, Y\)</span> (para nosotros gorriones que sobreviven y gorriones que no sobreviven a la tormenta) de tamaños <span class="math inline">\(n_X = 21\)</span> y <span class="math inline">\(n_Y = 28\)</span> respectivamente, de modo que cada una de estas muestras sigue una ley normal multivariante <span class="math inline">\(N_5(\mu_X, \Sigma_X)\)</span> y <span class="math inline">\(N_5(\mu_Y, \Sigma_Y)\)</span>.</p>
 <p>Nuestro objetivo es comparar las medias y covarianzas entre el grupo de supervivientes y no supervivientes.</p>
 </section>
@@ -128,47 +128,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="tratamiento-de-los-datos">Tratamiento de los datos:</h3>
 <p>En primer lugar renombramos las variables de nuestros dos conjunto de datos y los juntamos para trabajar con único Dataset.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Renombramos las variables de cada DataSet y definimos la variable "superv" </span></span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Renombramos las variables de cada DataSet y definimos la variable "X0" </span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># de tipo factor.</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>gorrionesS <span class="ot">=</span> gorrionesS <span class="sc">%&gt;%</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">tlen =</span> X1, <span class="at">eala =</span> X2, <span class="at">picolen =</span> X3, <span class="at">humlen =</span> X4, <span class="at">estlen =</span> X5)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>gorrionesSnum <span class="ot">=</span> gorrionesS</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">28</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>gorrionesS<span class="sc">$</span>superv <span class="ot">&lt;-</span> <span class="fu">factor</span>(S)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>gorrionesS <span class="ot">&lt;-</span> gorrionesS <span class="sc">%&gt;%</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(superv, tlen, eala, picolen, humlen, estlen)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>gorrionesN <span class="ot">=</span> gorrionesN <span class="sc">%&gt;%</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">tlen =</span> X1_1, <span class="at">eala =</span> X2_2, <span class="at">picolen =</span> X3_3, <span class="at">humlen =</span> X4_4, <span class="at">estlen =</span> X5_5)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>gorrionesNnum <span class="ot">=</span> gorrionesN</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">numeric</span>(<span class="dv">21</span>)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>gorrionesN<span class="sc">$</span>superv <span class="ot">&lt;-</span> <span class="fu">factor</span>(N)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>gorrionesN <span class="ot">&lt;-</span> gorrionesN <span class="sc">%&gt;%</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(superv, tlen, eala, picolen, humlen, estlen)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>gorrionesSnum <span class="ot">=</span> gorrionesS</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">28</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>gorrionesS<span class="sc">$</span>X0 <span class="ot">&lt;-</span> <span class="fu">factor</span>(S)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>gorrionesS <span class="ot">&lt;-</span> gorrionesS <span class="sc">%&gt;%</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(X0, X1, X2, X3, X4, X5)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>gorrionesN <span class="ot">=</span> gorrionesN <span class="sc">%&gt;%</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">X1 =</span> X1_1, <span class="at">X2 =</span> X2_2, <span class="at">X3 =</span> X3_3, <span class="at">X4 =</span> X4_4, <span class="at">X5 =</span> X5_5)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>gorrionesNnum <span class="ot">=</span> gorrionesN</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">numeric</span>(<span class="dv">21</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>gorrionesN<span class="sc">$</span>X0 <span class="ot">&lt;-</span> <span class="fu">factor</span>(N)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>gorrionesN <span class="ot">&lt;-</span> gorrionesN <span class="sc">%&gt;%</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(X0, X1, X2, X3, X4, X5)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Juntamos ambos conjuntos de datos en un único Dataset</span></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Juntamos ambos conjuntos de datos en un único Dataset</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>gorriones <span class="ot">=</span> <span class="fu">rbind</span>(gorrionesS, gorrionesN)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>gorriones <span class="ot">=</span> <span class="fu">rbind</span>(gorrionesS, gorrionesN)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <!--- Y aquí finalmente lo que nos pide el ejercicio --->
 </section>
 <section id="comparación-de-medias" class="level3">
 <h3 class="anchored" data-anchor-id="comparación-de-medias">Comparación de medias:</h3>
-<p>Calculamos el vector de medias de las variables numéricas según si los gorriones sobrevivieron o no a las condiciones meteorológicas adversas. Una vez hecho esto, dado que ambas muestras, tanto la de supervivientes como la de no supervivientes, siguen distribuciones normales multivariantes, en particular, cada una de las variables <span class="math inline">\(X_i\)</span> e <span class="math inline">\(Y_j\)</span> sigue una ditribución normal univariante. Bajo esta premisa podemos aplicar el t-test para hacer un contraste de medias.</p>
+<p>Calculamos el vector de medias de las variables numéricas según si los gorriones sobrevivieron o no a las condiciones meteorológicas adversas. Una vez hecho esto, dado que ambas muestras, tanto la de supervivientes como la de no supervivientes, siguen distribuciones normales multivariantes, podemos aplicar el test <span class="math inline">\(T^2\)</span> de Hotelling para hacer un contraste de medias.</p>
+<p><span class="math display">\[ \left\{\begin{array}{l}
+H_{0}:\mu_S= \mu_N \\
+H_{1}: \text{Las medias multivariantes son diferentes}
+\end{array}\right. \]</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Mmedias <span class="ot">=</span> gorriones <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(superv) <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(X0) <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print.data.frame</span>(Mmedias, <span class="at">digits =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  superv   tlen   eala picolen humlen estlen
-1      1 157.89 241.29  314.89 185.25 207.32
-2      0 158.10 241.38  314.19 183.95 209.52</code></pre>
+<pre><code>  X0     X1     X2     X3     X4     X5
+1  1 157.89 241.29 314.89 185.25 207.32
+2  0 158.10 241.38 314.19 183.95 209.52</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>resultadotest <span class="ot">=</span> <span class="fu">hotelling.test</span>(gorrionesSnum,gorrionesNnum, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>resultadotest <span class="ot">=</span> <span class="fu">hotelling.test</span>(gorrionesSnum, gorrionesNnum, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>resultadotest</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Test stat:  3.8995 
@@ -177,7 +179,17 @@ Denominator df:  31.9132779825107
 P-value:  0.6178 </code></pre>
 </div>
 </div>
-<p>Como podemos observar el <em>p-valor</em> es superior a 0.05, por tanto, podemos aceptar la hipotesis nula que las medias de las dos poblaciones son iguales.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>resultadotest <span class="ot">=</span> <span class="fu">hotelling.test</span>(gorrionesSnum, gorrionesNnum, <span class="at">var.equal =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>resultadotest</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Test stat:  4.1449 
+Numerator df:  5 
+Denominator df:  43 
+P-value:  0.5847 </code></pre>
+</div>
+</div>
+<p>Como podemos observar el <em>p-valor</em>, en ambos casos, es superior a 0.05, por tanto, podemos aceptar la hipotesis nula que las medias de las dos poblaciones son iguales.</p>
 <p>A partir de aquí realizaremos la comparación de las covarianzas.</p>
 </section>
 <section id="comparación-de-covarianzas" class="level3">
@@ -193,48 +205,48 @@ H_{1}: \text{No todas las covarianzas son iguales}
 <p><span class="math display">\[ S = \frac{n_X S_X + n_Y S_Y}{n_X + n_Y}   \]</span></p>
 <p>En particular, para nuestro conjunto de datos estos cálculos serían los siguientes:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definimos los tamaños de las muestras de gorriones supervivientes, </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># no supervivientes y muestra conjunta.</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>nX <span class="ot">=</span> <span class="fu">nrow</span>(gorrionesS)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>nY <span class="ot">=</span> <span class="fu">nrow</span>(gorrionesN)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>nT <span class="ot">=</span> <span class="fu">nrow</span>(gorriones)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculamos las matrices de covarianza para cada variable aleatoria </span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># que forma la distribución multivariante</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>covX <span class="ot">=</span> <span class="fu">cov</span>(<span class="fu">select_if</span>(gorrionesS, is.numeric)) <span class="co"># Supervivientes</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>covY <span class="ot">=</span> <span class="fu">cov</span>(<span class="fu">select_if</span>(gorrionesN, is.numeric)) <span class="co"># No supervivientes</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>covT <span class="ot">=</span> ((nX<span class="sc">*</span>covX)<span class="sc">+</span>(nY<span class="sc">*</span>covY))<span class="sc">/</span>(nX<span class="sc">+</span>nY) <span class="co"># Conjunta</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Estadístico de contraste</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>lambdaR <span class="ot">=</span> (<span class="fu">det</span>(covX)<span class="sc">**</span>(nX<span class="sc">/</span><span class="dv">2</span>))<span class="sc">*</span>(<span class="fu">det</span>(covY)<span class="sc">**</span>(nY<span class="sc">/</span><span class="dv">2</span>))<span class="sc">/</span>(<span class="fu">det</span>(covT)<span class="sc">**</span>(nT<span class="sc">/</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definimos los tamaños de las muestras de gorriones supervivientes, </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># no supervivientes y muestra conjunta.</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>nX <span class="ot">=</span> <span class="fu">nrow</span>(gorrionesS)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>nY <span class="ot">=</span> <span class="fu">nrow</span>(gorrionesN)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>nT <span class="ot">=</span> <span class="fu">nrow</span>(gorriones)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculamos las matrices de covarianza para cada variable aleatoria </span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># que forma la distribución multivariante</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>covX <span class="ot">=</span> <span class="fu">cov</span>(<span class="fu">select_if</span>(gorrionesS, is.numeric)) <span class="co"># Supervivientes</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>covY <span class="ot">=</span> <span class="fu">cov</span>(<span class="fu">select_if</span>(gorrionesN, is.numeric)) <span class="co"># No supervivientes</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>covT <span class="ot">=</span> ((nX<span class="sc">*</span>covX)<span class="sc">+</span>(nY<span class="sc">*</span>covY))<span class="sc">/</span>(nX<span class="sc">+</span>nY) <span class="co"># Conjunta</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Estadístico de contraste</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>lambdaR <span class="ot">=</span> (<span class="fu">det</span>(covX)<span class="sc">**</span>(nX<span class="sc">/</span><span class="dv">2</span>))<span class="sc">*</span>(<span class="fu">det</span>(covY)<span class="sc">**</span>(nY<span class="sc">/</span><span class="dv">2</span>))<span class="sc">/</span>(<span class="fu">det</span>(covT)<span class="sc">**</span>(nT<span class="sc">/</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Bajo la hipótesis nula, tenemos que <span class="math inline">\(-2\log(\lambda_R)\)</span> ~ <span class="math inline">\(\chi^2_q\)</span> donde <span class="math inline">\(q = \frac{1}{2}(g-1)p(p+1)\)</span> donde <span class="math inline">\(g\)</span> es el número de grupos (<span class="math inline">\(2\)</span>) y <span class="math inline">\(p\)</span> el número de variables (<span class="math inline">\(5\)</span>).</p>
 <p>Obsérvese que aplicando logaritmos a la empresión de <span class="math inline">\(\lambda_R\)</span> podemos deducir la siguiente igualdad:</p>
 <p><span class="math display">\[ -2 \log(\lambda_R) = n \log |S| - (n_X \log |S_X| + n_Y \log |S_Y|) \]</span></p>
 <p>Si realizamos estos últimos cálculos para nuestro conjunto de datos obtenemos:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>q <span class="ot">=</span> (<span class="dv">2-1</span>)<span class="sc">*</span><span class="dv">5</span><span class="sc">*</span>(<span class="dv">5</span><span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># -2*log(lambda_R) es logLambda</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>logLambda <span class="ot">=</span> nT<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covT))<span class="sc">-</span>(nX<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covX))<span class="sc">+</span>nY<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covY)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>q <span class="ot">=</span> (<span class="dv">2-1</span>)<span class="sc">*</span><span class="dv">5</span><span class="sc">*</span>(<span class="dv">5</span><span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># -2*log(lambda_R) es logLambda</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>logLambda <span class="ot">=</span> nT<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covT))<span class="sc">-</span>(nX<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covX))<span class="sc">+</span>nY<span class="sc">*</span><span class="fu">log</span>(<span class="fu">det</span>(covY)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Msd <span class="ot">=</span> gorriones <span class="sc">%&gt;%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(superv) <span class="sc">%&gt;%</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, sd, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print.data.frame</span>(Msd, <span class="at">digits=</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Msd <span class="ot">=</span> gorriones <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(X0) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, sd, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print.data.frame</span>(Msd, <span class="at">digits=</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  superv tlen eala picolen humlen estlen
-1      1 3.55 4.41    7.28   4.29   7.07
-2      0 3.87 5.95    8.93   7.11  12.87</code></pre>
+<pre><code>  X0   X1   X2   X3   X4    X5
+1  1 3.55 4.41 7.28 4.29  7.07
+2  0 3.87 5.95 8.93 7.11 12.87</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span><span class="fu">pchisq</span>(logLambda, <span class="at">df=</span>q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">-</span><span class="fu">pchisq</span>(logLambda, <span class="at">df=</span>q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.03495061</code></pre>
 </div>

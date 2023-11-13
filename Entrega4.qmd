@@ -39,6 +39,7 @@ $X_2 =$ Extensión del ala
 $X_3 =$ Longitud del pico y la cabeza
 $X_4 =$ Longitud del húmero
 $X_5 =$ Longitud del esternón
+$X_0 =$ Variable que indica si los gorriones son supervivientes $(1)$ o no $(0)$
 
 Consideraremos dos muestras aleatorias simples e independientes $X, Y$ (para nosotros gorriones que sobreviven y gorriones que no sobreviven a la tormenta) de tamaños $n_X = 21$ y $n_Y = 28$ respectivamente, de modo que cada una de estas muestras sigue una ley normal multivariante $N_5(\mu_X, \Sigma_X)$ y $N_5(\mu_Y, \Sigma_Y)$.
 
@@ -54,24 +55,22 @@ En primer lugar renombramos las variables de nuestros dos conjunto de datos y lo
 
 ```{r}
 
-# Renombramos las variables de cada DataSet y definimos la variable "superv" 
+# Renombramos las variables de cada DataSet y definimos la variable "X0" 
 # de tipo factor.
 
-gorrionesS = gorrionesS %>%
-  rename(tlen = X1, eala = X2, picolen = X3, humlen = X4, estlen = X5)
 gorrionesSnum = gorrionesS
 S = rep(1,28)
-gorrionesS$superv <- factor(S)
+gorrionesS$X0 <- factor(S)
 gorrionesS <- gorrionesS %>%
-  select(superv, tlen, eala, picolen, humlen, estlen)
+  select(X0, X1, X2, X3, X4, X5)
 
 gorrionesN = gorrionesN %>%
-  rename(tlen = X1_1, eala = X2_2, picolen = X3_3, humlen = X4_4, estlen = X5_5)
+  rename(X1 = X1_1, X2 = X2_2, X3 = X3_3, X4 = X4_4, X5 = X5_5)
 gorrionesNnum = gorrionesN
 N = numeric(21)
-gorrionesN$superv <- factor(N)
+gorrionesN$X0 <- factor(N)
 gorrionesN <- gorrionesN %>%
-  select(superv, tlen, eala, picolen, humlen, estlen)
+  select(X0, X1, X2, X3, X4, X5)
 
 # Juntamos ambos conjuntos de datos en un único Dataset
 
@@ -83,23 +82,31 @@ gorriones = rbind(gorrionesS, gorrionesN)
 
 ### Comparación de medias:
 
-Calculamos el vector de medias de las variables numéricas según si los gorriones sobrevivieron o no a las condiciones meteorológicas adversas. Una vez hecho esto, dado que ambas muestras, tanto la de supervivientes como la de no supervivientes, siguen distribuciones normales multivariantes, en particular, cada una de las variables $X_i$ e $Y_j$ sigue una ditribución normal univariante. Bajo esta premisa podemos aplicar el t-test para hacer un contraste de medias.
+Calculamos el vector de medias de las variables numéricas según si los gorriones sobrevivieron o no a las condiciones meteorológicas adversas. Una vez hecho esto, dado que ambas muestras, tanto la de supervivientes como la de no supervivientes, siguen distribuciones normales multivariantes, podemos aplicar el test $T^2$ de Hotelling para hacer un contraste de medias.
 
+$$ \left\{\begin{array}{l}
+H_{0}:\mu_S= \mu_N \\
+H_{1}: \text{Las medias multivariantes son diferentes}
+\end{array}\right. $$
 
 ```{r}
 Mmedias = gorriones %>%
-  group_by(superv) %>%
+  group_by(X0) %>%
   summarise_if(is.numeric, mean, na.rm = TRUE) 
 print.data.frame(Mmedias, digits = 5)
 ```
 
 ```{r}
-resultadotest = hotelling.test(gorrionesSnum,gorrionesNnum, var.equal = FALSE)
+resultadotest = hotelling.test(gorrionesSnum, gorrionesNnum, var.equal = FALSE)
 resultadotest
 ```
 
+```{r}
+resultadotest = hotelling.test(gorrionesSnum, gorrionesNnum, var.equal = TRUE)
+resultadotest
+```
 
-Como podemos observar el _p-valor_ es superior a 0.05, por tanto, podemos aceptar la hipotesis nula que las medias de las dos poblaciones son iguales.
+Como podemos observar el _p-valor_, en ambos casos, es superior a 0.05, por tanto, podemos aceptar la hipotesis nula que las medias de las dos poblaciones son iguales.
 
 A partir de aquí realizaremos la comparación de las covarianzas.
 
@@ -166,7 +173,7 @@ logLambda = nT*log(det(covT))-(nX*log(det(covX))+nY*log(det(covY)))
 
 ```{r}
 Msd = gorriones %>%
-  group_by(superv) %>%
+  group_by(X0) %>%
   summarise_if(is.numeric, sd, na.rm = TRUE)
 print.data.frame(Msd, digits= 3)
 ```
