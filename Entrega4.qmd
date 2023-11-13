@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(readxl)
 library(dplyr)
+library(Hotelling)
 ```
 
 <!--- Carga de los datos --->
@@ -58,6 +59,7 @@ En primer lugar renombramos las variables de nuestros dos conjunto de datos y lo
 
 gorrionesS = gorrionesS %>%
   rename(tlen = X1, eala = X2, picolen = X3, humlen = X4, estlen = X5)
+gorrionesSnum = gorrionesS
 S = rep(1,28)
 gorrionesS$superv <- factor(S)
 gorrionesS <- gorrionesS %>%
@@ -65,6 +67,7 @@ gorrionesS <- gorrionesS %>%
 
 gorrionesN = gorrionesN %>%
   rename(tlen = X1_1, eala = X2_2, picolen = X3_3, humlen = X4_4, estlen = X5_5)
+gorrionesNnum = gorrionesN
 N = numeric(21)
 gorrionesN$superv <- factor(N)
 gorrionesN <- gorrionesN %>%
@@ -91,26 +94,12 @@ print.data.frame(Mmedias, digits = 5)
 ```
 
 ```{r}
-t.test(gorrionesS$tlen, gorrionesN$tlen)
+resultadotest = hotelling.test(gorrionesSnum,gorrionesNnum, var.equal = FALSE)
+resultadotest
 ```
 
-```{r}
-t.test(gorrionesS$eala, gorrionesN$eala)
-```
 
-```{r}
-t.test(gorrionesS$picolen, gorrionesN$picolen)
-```
-
-```{r}
-t.test(gorrionesS$humlen, gorrionesN$humlen)
-```
-
-```{r}
-t.test(estlen ~ superv, data = gorriones)
-```
-
-Ninguno de los contrastes proporciona un p valor inferior a $0.05$, por lo que en ningún caso podemos rechazar la hipótesis nula de que las medias, para cada característica, no sean las mismas, y aceptamos la hipotesi nula, que las medias son iguales.
+Como podemos observar el _p-valor_ es superior a 0.05, por tanto, podemos aceptar la hipotesis nula que las medias de las dos poblaciones son iguales.
 
 A partir de aquí realizaremos la comparación de las covarianzas.
 
@@ -192,3 +181,26 @@ print.data.frame(Msd, digits= 3)
 $$\text{p-valor} = P(\chi^2_{15} \geq 26.3055)) = 1- \text{pchisq(26.3055, 15)} \approx 0.03 < 0.05$$
 
 Entonces, dado que el _p-valor_ es inferior a $0.05$ rechazamos la hipótesis nula a favor de la hipótesis alternativa. Luego, existe evidencia significativa de que las covarianzas son diferentes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
